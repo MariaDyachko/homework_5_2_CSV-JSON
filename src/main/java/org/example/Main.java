@@ -104,20 +104,23 @@ public class Main {
             Document doc = builder.parse(file);
             Node root = doc.getDocumentElement();
             NodeList nodeList = root.getChildNodes();
-            //read(root);
-            for (int i = 0; i < nodeList.getLength(); i++){
-                read(nodeList.item(i));
-                if(!myHashMap.isEmpty()) {
-                    long id = Long.parseLong(myHashMap.get("id"));
-                    list.add(new Employee(id,
-                            myHashMap.get("firstName"),
-                            myHashMap.get("lastName"),
-                            myHashMap.get("country"),
-                            Integer.parseInt(myHashMap.get("age"))));
+
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+
+                if (Node.ELEMENT_NODE == node.getNodeType()) {
+                    Element employee = (Element) node;
+
+                    long id = Long.parseLong(employee.getElementsByTagName("id").item(0).getTextContent());
+                    String lastName = employee.getElementsByTagName("lastName").item(0).getTextContent();
+                    String country = employee.getElementsByTagName("country").item(0).getTextContent();
+                    String firstName = employee.getElementsByTagName("firstName").item(0).getTextContent();
+                    int age = Integer.parseInt(employee.getElementsByTagName("age").item(0).getTextContent());
+                    list.add(new Employee(id, firstName, lastName, country, age));
+
                 }
+
             }
-            list.remove(3); //упс
-            list.remove(1);
             return list;
 
         }catch (ParserConfigurationException | SAXException | IOException e){
@@ -126,18 +129,5 @@ public class Main {
         return List.of();
     }
 
-    private static void read(Node node) {
-        NodeList nodeList = node.getChildNodes();
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            Node node_ = nodeList.item(i);
-            if (Node.ELEMENT_NODE == node_.getNodeType()) {
-                System. out.print(node_.getNodeName() +"  ");
-                Element element = (Element) node_;
-                System.out.println(element.getTextContent());
-                myHashMap.put(node_.getNodeName(), element.getTextContent());
-                //read(node_);
-            }
-        }
-    }
 
 }
